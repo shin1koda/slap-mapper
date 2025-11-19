@@ -19,7 +19,7 @@
 
 ### From source
 ```bash
-git clone https://github.com/YOURNAME/slap-mapper.git
+git clone https://github.com/shin1koda/slap-mapper.git
 cd slap-mapper
 conda create -n slap python=3.10
 conda activate slap
@@ -28,7 +28,7 @@ pip install -e .
 
 ### Dependencies
 - Python 3.8+
-- NumPy / SciPy  
+- NumPy / SciPy
 - RDKit (optional, for handling SMILES)
 - ASE (optional, for handling 3D-structure)
 
