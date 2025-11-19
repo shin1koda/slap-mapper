@@ -18,7 +18,7 @@
 ## Installation
 
 ### From source
-```
+```bash
 git clone https://github.com/YOURNAME/slap-mapper.git
 cd slap-mapper
 conda create -n slap python=3.10
@@ -36,7 +36,7 @@ pip install -e .
 
 ## Quick Example
 
-```
+```python
 from slap_mapper.aam import SlapAAM
 
 mapper = SlapAAM(binary=True)
