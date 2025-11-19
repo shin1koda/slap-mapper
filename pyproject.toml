@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slap-mapper"
+version = "0.1.0"
+description = "Atom-to-atom mapping tool based on sequential linear assignment problem"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Shin-ichi Koda", email = "koda@ims.ac.jp" }
+]
+dependencies = [
+    "numpy",
+    "scipy",
+]
+
+keywords = ["atom mapping", "graph matching", "linear assignment", "cheminformatics", "AAM"]
+
+[project.optional-dependencies]
+ase = ["ase"]
+
+[tool.setuptools.packages.find]
