@@ -70,7 +70,7 @@ pip install "slapmapper @ git+https://github.com/shin1koda/slap-mapper"
 An example script is provided in `sample/sample.py` of [SLAPMapper GitHub repository](https://github.com/shin1koda/slap-mapper):
 
 ```python
-from slap_mapper.aam import SlapAAM
+from slapmapper.aam import SlapAAM
 
 mapper = SlapAAM(binary=True)
 
