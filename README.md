@@ -93,7 +93,8 @@ react = "react.xyz"
 prod = "prod.xyz"
 mapper.reset()
 mapper.map_3d(react,prod)
-results = mapper.results
+mapped_rxns = [ r["mapping"] for r in mapper.results ]
+print(mapped_rxns)
 ```
 
 
