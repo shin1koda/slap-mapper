@@ -1,0 +1,190 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Index Mapping String Format &mdash; slapmapper 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="SLAPMapper Atom-to-atom Mapping" href="aam/aam.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            slapmapper
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core.html">SLAPMapper Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aam/aam.html">SLAPMapper Atom-to-atom Mapping</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Index Mapping String Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mapping-block-structure">Mapping Block Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#index-set-syntax">Index Set Syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiple-mappings">Multiple Mappings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#index-base-0-based-vs-1-based">Index Base (0-based vs 1-based)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">slapmapper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Index Mapping String Format</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/idxmapstr.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="index-mapping-string-format">
+<span id="idxmapstr"></span><h1>Index Mapping String Format<a class="headerlink" href="#index-mapping-string-format" title="Link to this heading"></a></h1>
+<p>The <em>index mapping string</em> is a compact textual syntax for specifying
+explicit correspondences between groups of nodes. It is used in the
+<code class="docutils literal notranslate"><span class="pre">map_3d</span></code> interface of <code class="xref py py-class docutils literal notranslate"><span class="pre">SlapAAM</span></code> to impose mapping constraints
+or to encode mapping results. In interactive mode, it is also used to
+record the history of user choices.</p>
+<p>An index mapping string consists of one or more <em>mapping blocks</em>,
+separated by semicolons:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">indices_left</span><span class="o">&gt;</span> <span class="o">&gt;&gt;</span> <span class="o">&lt;</span><span class="n">indices_right</span><span class="o">&gt;</span> <span class="p">;</span> <span class="o">&lt;</span><span class="n">indices_left</span><span class="o">&gt;</span> <span class="o">&gt;&gt;</span> <span class="o">&lt;</span><span class="n">indices_right</span><span class="o">&gt;</span> <span class="p">;</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Each block defines a correspondence between a set of indices on the left
+and a set of indices on the right.</p>
+<p>The format is parsed by <code class="xref py py-func docutils literal notranslate"><span class="pre">parse_index_mapping_string()</span></code> in <code class="docutils literal notranslate"><span class="pre">_idxmapstr.py</span></code>.
+Below is the complete specification.</p>
+<section id="mapping-block-structure">
+<h2>Mapping Block Structure<a class="headerlink" href="#mapping-block-structure" title="Link to this heading"></a></h2>
+<p>A mapping block has the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="o">-</span><span class="mi">6</span>
+</pre></div>
+</div>
+<p>Here:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1-3,5</span></code> denotes a set of indices on the left</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">4-6</span></code> denotes a set of indices on the right</p></li>
+</ul>
+<p>Both sides must contain the <strong>same number of unique indices</strong>. If they do
+not match, a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> is raised.</p>
+</section>
+<section id="index-set-syntax">
+<h2>Index Set Syntax<a class="headerlink" href="#index-set-syntax" title="Link to this heading"></a></h2>
+<p>An index set is a comma-separated list of items. Each item can be:</p>
+<ul class="simple">
+<li><p>a single integer (e.g., <code class="docutils literal notranslate"><span class="pre">3</span></code>), or</p></li>
+<li><p>a range written as <code class="docutils literal notranslate"><span class="pre">start-end</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">3-6</span></code> meaning <code class="docutils literal notranslate"><span class="pre">3,4,5,6</span></code>)</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>5                → [5]
+1-3              → [1, 2, 3]
+1,4-7,10         → [1, 4, 5, 6, 7, 10]
+</pre></div>
+</div>
+<p>Duplicate entries are removed automatically, and output indices are always
+returned in sorted order.</p>
+</section>
+<section id="multiple-mappings">
+<h2>Multiple Mappings<a class="headerlink" href="#multiple-mappings" title="Link to this heading"></a></h2>
+<p>Mapping blocks are separated by semicolons:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="o">-</span><span class="mi">3</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="o">-</span><span class="mi">6</span> <span class="p">;</span> <span class="mi">7</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span>
+</pre></div>
+</div>
+<p>The parser returns a list of pairs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span>
+    <span class="p">([</span><span class="mi">7</span><span class="p">],</span>       <span class="p">[</span><span class="mi">8</span><span class="p">])</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="index-base-0-based-vs-1-based">
+<h2>Index Base (0-based vs 1-based)<a class="headerlink" href="#index-base-0-based-vs-1-based" title="Link to this heading"></a></h2>
+<p>The parser accepts a <code class="docutils literal notranslate"><span class="pre">base</span></code> argument to interpret the input indices:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">base</span> <span class="pre">=</span> <span class="pre">0</span></code> (default): indices are interpreted as zero-based.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">base</span> <span class="pre">=</span> <span class="pre">1</span></code>: indices in the string are interpreted as one-based and
+converted internally to zero-based values.</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pair_str</span> <span class="o">=</span> <span class="s2">&quot;1-3 &gt;&gt; 4-6&quot;</span>
+<span class="n">base</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aam/aam.html" class="btn btn-neutral float-left" title="SLAPMapper Atom-to-atom Mapping" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Shin-ichi Koda.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

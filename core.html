@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SLAPMapper Core &mdash; slapmapper 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SLAPMapper Atom-to-atom Mapping" href="aam/aam.html" />
+    <link rel="prev" title="SLAPMapper" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            slapmapper
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SLAPMapper Core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#slapmapper.core.LabeledGraph"><code class="docutils literal notranslate"><span class="pre">LabeledGraph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.graph"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.graph</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.labels"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.labels</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.label2idxs"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.label2idxs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.props"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.props</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.build_label2idxs"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.build_label2idxs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.copy"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.set_prop"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.set_prop()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.binarize_graph"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.binarize_graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.LabeledGraph.get_WL_labels"><code class="docutils literal notranslate"><span class="pre">LabeledGraph.get_WL_labels()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#slapmapper.core.SlapMapper"><code class="docutils literal notranslate"><span class="pre">SlapMapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.SlapMapper.results"><code class="docutils literal notranslate"><span class="pre">SlapMapper.results</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.SlapMapper.minval"><code class="docutils literal notranslate"><span class="pre">SlapMapper.minval</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.SlapMapper.binary"><code class="docutils literal notranslate"><span class="pre">SlapMapper.binary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.SlapMapper.reset"><code class="docutils literal notranslate"><span class="pre">SlapMapper.reset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slapmapper.core.SlapMapper.get_maps"><code class="docutils literal notranslate"><span class="pre">SlapMapper.get_maps()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aam/aam.html">SLAPMapper Atom-to-atom Mapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="idxmapstr.html">Index Mapping String Format</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">slapmapper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SLAPMapper Core</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/core.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="slapmapper-core">
+<h1>SLAPMapper Core<a class="headerlink" href="#slapmapper-core" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">slapmapper.core.</span></span><span class="sig-name descname"><span class="pre">LabeledGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.LabeledGraph" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Lightweight representation of a labeled graph.</p>
+<p>The graph is stored as an adjacency dictionary together with a list of
+integer node labels. This class provides the minimal functionality
+required by the SLAP-based matching algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em> or </em><em>float</em><em>]</em><em>]</em>) – Adjacency structure where <cite>graph[i][j]</cite> is the weight of the edge
+between nodes <cite>i</cite> and <cite>j</cite>. Missing entries imply no adjacency.</p></li>
+<li><p><strong>labels</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Initial node labels.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#slapmapper.core.LabeledGraph.graph" title="Link to this definition"></a></dt>
+<dd><p>Adjacency information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[int, dict[int, int or float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.labels">
+<span class="sig-name descname"><span class="pre">labels</span></span><a class="headerlink" href="#slapmapper.core.LabeledGraph.labels" title="Link to this definition"></a></dt>
+<dd><p>Current labels of nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.label2idxs">
+<span class="sig-name descname"><span class="pre">label2idxs</span></span><a class="headerlink" href="#slapmapper.core.LabeledGraph.label2idxs" title="Link to this definition"></a></dt>
+<dd><p>Mapping from each label to the indices of nodes carrying it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[int, list[int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.props">
+<span class="sig-name descname"><span class="pre">props</span></span><a class="headerlink" href="#slapmapper.core.LabeledGraph.props" title="Link to this definition"></a></dt>
+<dd><p>Optional user-defined properties attached to the graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>This class deliberately contains only the operations needed by the
+sequential LAP procedure. It is not intended to be a full general-purpose
+graph library.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.build_label2idxs">
+<span class="sig-name descname"><span class="pre">build_label2idxs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.LabeledGraph.build_label2idxs" title="Link to this definition"></a></dt>
+<dd><p>Rebuild the mapping from each label value to the list of node indices
+carrying that label.</p>
+<p>This method clears and reconstructs <code class="docutils literal notranslate"><span class="pre">self.label2idxs</span></code> based on the
+current contents of <code class="docutils literal notranslate"><span class="pre">self.labels</span></code>. It should be called whenever node
+labels are modified.</p>
+<p class="rubric">Notes</p>
+<p>No structural information is changed; only the auxiliary lookup table
+is updated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.LabeledGraph.copy" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of the labeled graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>LabeledGraph</strong> – A new instance with duplicated graph structure and labels.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This operation does not deep-copy user-defined properties stored in
+<code class="docutils literal notranslate"><span class="pre">props</span></code>. If such values are mutable and need independent copies,
+they should be handled externally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.set_prop">
+<span class="sig-name descname"><span class="pre">set_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.LabeledGraph.set_prop" title="Link to this definition"></a></dt>
+<dd><p>Attach or overwrite a user-defined property associated with the graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Property name.</p></li>
+<li><p><strong>prop</strong> (<em>any</em>) – Arbitrary Python object representing the property value.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Properties stored here do not affect any matching or refinement
+operations. They are provided solely for user convenience.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.binarize_graph">
+<span class="sig-name descname"><span class="pre">binarize_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.LabeledGraph.binarize_graph" title="Link to this definition"></a></dt>
+<dd><p>Convert all edge weights in the graph to binary values.</p>
+<p>Every existing edge weight <code class="docutils literal notranslate"><span class="pre">w</span></code> is replaced with <code class="docutils literal notranslate"><span class="pre">1</span></code>. This is useful
+when only the adjacency structure is needed and weight magnitudes
+should be ignored.</p>
+<p class="rubric">Notes</p>
+<p>The operation modifies the graph in-place.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="slapmapper.core.LabeledGraph.get_WL_labels">
+<span class="sig-name descname"><span class="pre">get_WL_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.LabeledGraph.get_WL_labels" title="Link to this definition"></a></dt>
+<dd><p>Perform a conventional Weisfeiler-Lehman (WL) label refinement starting
+from the current node labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list[int]</strong> – The refined WL label list after stabilization.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="slapmapper.core.SlapMapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">slapmapper.core.</span></span><span class="sig-name descname"><span class="pre">SlapMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.SlapMapper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Sequential LAP-based approximate mapper for a pair of labeled graphs.</p>
+<p>The algorithm reduces the problem of matching two labeled graphs to a
+sequence of label refinement steps coupled with solving a series of
+linear assignment problems (LAPs). Labels are progressively refined
+using neighborhood information, and branching is introduced when multiple
+symmetrically distinct LAP solutions are available. Symmetry-breaking
+heuristics can be applied to choose a representative mapping among
+multiple symmetrically equivalent ones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>binary</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default=False</em><em>)</em>) – If True, all edge weights are converted to 0/1 prior to evaluation.
+This yields a purely structural matcher based only on adjacency.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="slapmapper.core.SlapMapper.results">
+<span class="sig-name descname"><span class="pre">results</span></span><a class="headerlink" href="#slapmapper.core.SlapMapper.results" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>List of matching results. Each dictionary contains:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;lgp&quot;</span></code> : the pair of refined LabeledGraph objects</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;val&quot;</span></code> : cumulative LAP cost, which coincides with the original graph matching cost when all symmetries are broken.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;lap_sols&quot;</span></code> : LAP solutions for each label</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;base&quot;</span></code> : (if interactive) base index for user prompts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;choices&quot;</span></code> : (if interactive) record of the user-selected mapping, written in <a class="reference internal" href="idxmapstr.html#idxmapstr"><span class="std std-ref">the index mapping string</span></a> format</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="slapmapper.core.SlapMapper.minval">
+<span class="sig-name descname"><span class="pre">minval</span></span><a class="headerlink" href="#slapmapper.core.SlapMapper.minval" title="Link to this definition"></a></dt>
+<dd><p>Minimum cumulative LAP cost encountered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="slapmapper.core.SlapMapper.binary">
+<span class="sig-name descname"><span class="pre">binary</span></span><a class="headerlink" href="#slapmapper.core.SlapMapper.binary" title="Link to this definition"></a></dt>
+<dd><p>Whether binary edge processing is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="slapmapper.core.SlapMapper.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.SlapMapper.reset" title="Link to this definition"></a></dt>
+<dd><p>Reset internal state of the mapper.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="slapmapper.core.SlapMapper.get_maps">
+<span class="sig-name descname"><span class="pre">get_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lgp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">break_sym_targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interactive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#slapmapper.core.SlapMapper.get_maps" title="Link to this definition"></a></dt>
+<dd><p>Approximately compute minimum-cost mappings between two labeled graphs.</p>
+<p>Given a pair of <code class="docutils literal notranslate"><span class="pre">LabeledGraph</span></code> instances, this method performs
+iterative label refinement and sequential LAP solving to determine
+all mappings that achieve the lowest possible total LAP cost.
+Optional symmetry-breaking rules can be applied to to choose
+a representative mapping among multiple symmetrically equivalent ones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lgp</strong> (<em>list</em><em>[</em><a class="reference internal" href="#slapmapper.core.LabeledGraph" title="slapmapper.core.LabeledGraph"><em>LabeledGraph</em></a><em>]</em>) – A list of exactly two LabeledGraph objects.</p></li>
+<li><p><strong>break_sym_targets</strong> (<em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Indices in the first graph for which branching should explicitly
+break label symmetry. If None, no symmetry-breaking is applied.</p></li>
+<li><p><strong>interactive</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default=False</em><em>)</em>) – If True, user-driven selection is used when multiple equivalent
+branch choices exist.</p></li>
+<li><p><strong>base</strong> (<em>int</em><em>, </em><em>optional</em>) – 0- or 1-based indexing for interactive prompts.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The resulting matchings are stored in <code class="docutils literal notranslate"><span class="pre">self.results</span></code>.
+Each entry contains the refined graph pair and the LAP solutions
+used to reach the final state.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="SLAPMapper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aam/aam.html" class="btn btn-neutral float-right" title="SLAPMapper Atom-to-atom Mapping" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Shin-ichi Koda.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
