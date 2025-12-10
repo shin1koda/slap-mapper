@@ -1,5 +1,7 @@
 # SLAPMapper: A scalable Python implementation of general-purpose atom-to-atom mapping
 
+![CI](https://github.com/shin1koda/slap-mapper/actions/workflows/tests.yml/badge.svg)
+
 ## Overview
 
 **SLAPMapper** is a Python package for **atom-to-atom mapping (AAM)** tool based on a fast,

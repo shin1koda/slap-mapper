@@ -1,0 +1,35 @@
+name: Tests (conda)
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: 'latest'
+          environment-name: slapmapper
+          create-args: >-
+            python=3.10
+          cache-environment: true
+
+      - name: Install dependencies
+        run: |
+          micromamba install -y -c conda-forge ase rdkit pytest
+
+      - name: Install SLAPMapper
+        run: |
+          pip install -e .
+
+      - name: Run tests
+        run: |
+          pytest -v
