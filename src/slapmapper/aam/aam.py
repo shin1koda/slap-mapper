@@ -18,7 +18,7 @@ class SlapAAM(SlapMapper):
 
     Parameters
     ----------
-    binary : bool, optional (default=False)
+    binary : bool, optional (default=True)
         If True, all edge weights are converted to 0/1 prior to evaluation.
         This yields a purely structural matcher based only on adjacency.
 
