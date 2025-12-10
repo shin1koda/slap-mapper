@@ -1,25 +1,59 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "slap-mapper"
-version = "0.1.0"
+name = "slapmapper"
+version = "1.0.0"
 description = "Atom-to-atom mapping tool based on sequential linear assignment problem"
+keywords = ["cheminformatics","chemoinformatics","atom-to-atom mapping","AAM","graph matching","graph alignment"]
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 authors = [
-    { name = "Shin-ichi Koda", email = "koda@ims.ac.jp" }
+  { name = "Shin-ichi Koda", email = "koda@ims.ac.jp" }
 ]
 dependencies = [
     "numpy",
     "scipy",
 ]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
 
-keywords = ["atom mapping", "graph matching", "linear assignment", "cheminformatics", "AAM"]
 
 [project.optional-dependencies]
-ase = ["ase"]
+ase = [
+    "ase",
+]
+rdkit = [
+    "rdkit",
+]
+dev = [
+    "pytest",
+    "build",
+    "twine",
+]
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+    "sphinx-autodoc-typehints",
+    "ghp-import",
+]
+
+[project.urls]
+Homepage = "https://github.com/shin1koda/slap-mapper"
+Source = "https://github.com/shin1koda/slap-mapper"
+Issues = "https://github.com/shin1koda/slap-mapper/issues"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
+where = ["src"]
+include = ["slapmapper*"]
+exclude = ["tests"]
+

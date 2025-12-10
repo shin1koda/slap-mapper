@@ -2,8 +2,40 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 from collections import defaultdict
 
-
 class LabeledGraph:
+    """
+    Lightweight representation of a labeled graph.
+
+    The graph is stored as an adjacency dictionary together with a list of
+    integer node labels. This class provides the minimal functionality
+    required by the SLAP-based matching algorithm.
+
+    Parameters
+    ----------
+    graph : dict[int, dict[int, int or float]]
+        Adjacency structure where `graph[i][j]` is the weight of the edge
+        between nodes `i` and `j`. Missing entries imply no adjacency.
+    labels : list[int]
+        Initial node labels.
+
+    Attributes
+    ----------
+    graph : dict[int, dict[int, int or float]]
+        Adjacency information.
+    labels : list[int]
+        Current labels of nodes.
+    label2idxs : dict[int, list[int]]
+        Mapping from each label to the indices of nodes carrying it.
+    props : dict
+        Optional user-defined properties attached to the graph.
+
+    Notes
+    -----
+    This class deliberately contains only the operations needed by the
+    sequential LAP procedure. It is not intended to be a full general-purpose
+    graph library.
+    """
+
     def __init__(self, graph, labels):
 
         self.graph = graph
@@ -12,18 +44,44 @@ class LabeledGraph:
         self.props = {}
         self.build_label2idxs()
 
-        self.ini_labels = self.labels.copy()
-        self.ini_label2idxs = self.label2idxs.copy()
-        self.ini_wl_labels = self.get_WL_labels()
+        self._ini_labels = self.labels.copy()
+        self._ini_wl_labels = self.get_WL_labels()
 
-        self.irred_labels = {}
+        self._irred_labels = {}
 
     def build_label2idxs(self):
+        """
+        Rebuild the mapping from each label value to the list of node indices
+        carrying that label.
+
+        This method clears and reconstructs ``self.label2idxs`` based on the
+        current contents of ``self.labels``. It should be called whenever node
+        labels are modified.
+
+        Notes
+        -----
+        No structural information is changed; only the auxiliary lookup table
+        is updated.
+        """
         self.label2idxs.clear()
         for idx, l in enumerate(self.labels):
             self.label2idxs[l].append(idx)
 
     def copy(self):
+        """
+        Return a copy of the labeled graph.
+
+        Returns
+        -------
+        LabeledGraph
+            A new instance with duplicated graph structure and labels.
+
+        Notes
+        -----
+        This operation does not deep-copy user-defined properties stored in
+        ``props``. If such values are mutable and need independent copies,
+        they should be handled externally.
+        """
         obj = type(self).__new__(type(self))
         obj.graph = {k: v.copy() for k, v in self.graph.items()}
         obj.labels = self.labels.copy()
@@ -32,24 +90,58 @@ class LabeledGraph:
         )
         obj.props = self.props
 
-        obj.ini_labels = self.ini_labels
-        obj.ini_label2idxs = self.ini_label2idxs
-        obj.ini_wl_labels = self.ini_wl_labels
+        obj._ini_labels = self._ini_labels
+        obj._ini_wl_labels = self._ini_wl_labels
 
-        obj.irred_labels = self.irred_labels.copy()
+        obj._irred_labels = self._irred_labels.copy()
 
         return obj
 
-    def set_prop(self,name,prop):
+    def set_prop(self, name, prop):
+        """
+        Attach or overwrite a user-defined property associated with the graph.
+
+        Parameters
+        ----------
+        name : str
+            Property name.
+        prop : any
+            Arbitrary Python object representing the property value.
+
+        Notes
+        -----
+        Properties stored here do not affect any matching or refinement
+        operations. They are provided solely for user convenience.
+        """
         self.props[name] = prop
 
     def binarize_graph(self):
+        """
+        Convert all edge weights in the graph to binary values.
+
+        Every existing edge weight ``w`` is replaced with ``1``. This is useful
+        when only the adjacency structure is needed and weight magnitudes
+        should be ignored.
+
+        Notes
+        -----
+        The operation modifies the graph in-place.
+        """
         for i in self.graph:
             for j in self.graph[i]:
                 self.graph[i][j] = 1
 
     def get_WL_labels(self):
+        """
+        Perform a conventional Weisfeiler-Lehman (WL) label refinement starting
+        from the current node labels.
 
+        Returns
+        -------
+        list[int]
+            The refined WL label list after stabilization.
+
+        """
         wl_labels = self.labels.copy()
 
         for _ in range(2 * len(wl_labels)):
@@ -73,38 +165,71 @@ class LabeledGraph:
             else:
                 wl_labels = temp_wl_labels
 
-
 class SlapMapper:
-    INF_INT = 100000
+    """
+    Sequential LAP-based approximate mapper for a pair of labeled graphs.
+
+    The algorithm reduces the problem of matching two labeled graphs to a
+    sequence of label refinement steps coupled with solving a series of
+    linear assignment problems (LAPs). Labels are progressively refined
+    using neighborhood information, and branching is introduced when multiple
+    symmetrically distinct LAP solutions are available. Symmetry-breaking
+    heuristics can be applied to choose a representative mapping among
+    multiple symmetrically equivalent ones.
+
+    Parameters
+    ----------
+    binary : bool, optional (default=False)
+        If True, all edge weights are converted to 0/1 prior to evaluation.
+        This yields a purely structural matcher based only on adjacency.
+
+    Attributes
+    ----------
+    results : list[dict]
+        List of matching results. Each dictionary contains:
+            - ``"lgp"`` : the pair of refined LabeledGraph objects
+            - ``"val"`` : cumulative LAP cost, which coincides with the original graph matching cost when all symmetries are broken.
+            - ``"lap_sols"`` : LAP solutions for each label
+            - ``"base"`` : (if interactive) base index for user prompts
+            - ``"choices"`` : (if interactive) record of the user-selected mapping, written in :ref:`the index mapping string<idxmapstr>` format
+    minval : int
+        Minimum cumulative LAP cost encountered.
+    binary : bool
+        Whether binary edge processing is used.
+
+    """
+    _INF_INT = 100000
 
     def __init__(self, binary=False):
 
-        self.stack = []
-        self.visited = []
+        self._stack = []
+        self._visited = []
         self.results = []
-        self.minval = SlapMapper.INF_INT
+        self.minval = SlapMapper._INF_INT
 
         self.binary = binary
-        self.valfactor = 2
 
     def reset(self):
+        """
+        Reset internal state of the mapper.
+        """
 
-        self.stack.clear()
-        self.visited.clear()
+        self._stack.clear()
+        self._visited.clear()
         self.results.clear()
-        self.minval = SlapMapper.INF_INT
+        self.minval = SlapMapper._INF_INT
 
-    def solve(self):
-        while self.stack:
-            lgp = self.stack.pop()
+    def _solve(self):
+        while self._stack:
+            lgp = self._stack.pop()
             self._solve_all_lap(lgp)
 
-    def remove_non_min_results(self):
+    def _remove_non_min_results(self):
 
         min_val = min(r["val"] for r in self.results)
         self.results = [r for r in self.results if r["val"] == min_val]
 
-    def remove_isomorphic_results(self, ini_mlg, break_sym_targets):
+    def _remove_isomorphic_results(self, ini_mlg, break_sym_targets):
 
         if len(self.results) < 2:
             return
@@ -128,6 +253,34 @@ class SlapMapper:
         self.results = new_results
 
     def get_maps(self, lgp, break_sym_targets=None, interactive=False, base=None):
+        """
+        Approximately compute minimum-cost mappings between two labeled graphs.
+
+        Given a pair of ``LabeledGraph`` instances, this method performs
+        iterative label refinement and sequential LAP solving to determine
+        all mappings that achieve the lowest possible total LAP cost.
+        Optional symmetry-breaking rules can be applied to to choose
+        a representative mapping among multiple symmetrically equivalent ones.
+
+        Parameters
+        ----------
+        lgp : list[LabeledGraph]
+            A list of exactly two LabeledGraph objects.
+        break_sym_targets : list[int], optional
+            Indices in the first graph for which branching should explicitly
+            break label symmetry. If None, no symmetry-breaking is applied.
+        interactive : bool, optional (default=False)
+            If True, user-driven selection is used when multiple equivalent
+            branch choices exist.
+        base : int, optional
+            0- or 1-based indexing for interactive prompts.
+
+        Notes
+        -----
+        The resulting matchings are stored in ``self.results``.
+        Each entry contains the refined graph pair and the LAP solutions
+        used to reach the final state.
+        """
 
         self.reset()
 
@@ -143,7 +296,7 @@ class SlapMapper:
                 for lg in temp_lgp:
                     lg.binarize_graph()
 
-        ini_mlg = merge_lgp(temp_lgps[0])
+        ini_mlg = _merge_lgp(temp_lgps[0])
 
         if interactive:
             given = [[], []]
@@ -157,11 +310,11 @@ class SlapMapper:
                         pass
 
         while temp_lgps:
-            self.stack.extend(temp_lgps)
+            self._stack.extend(temp_lgps)
             self.results.clear()
-            self.minval = SlapMapper.INF_INT
-            self.solve()
-            self.remove_non_min_results()
+            self.minval = SlapMapper._INF_INT
+            self._solve()
+            self._remove_non_min_results()
 
             if break_sym_targets is None:
                 break
@@ -170,7 +323,7 @@ class SlapMapper:
                 temp_lgps, given = self._break_sym_interactive(
                     ini_lgp, base, given, break_sym_targets
                 )
-                self.visited.clear()
+                self._visited.clear()
             else:
                 temp_lgps, temp_results = self._break_sym(
                     temp_results, break_sym_targets
@@ -179,21 +332,16 @@ class SlapMapper:
         if not interactive and break_sym_targets is not None:
             self.results = temp_results
 
-        self.remove_non_min_results()
+        self._remove_non_min_results()
         if break_sym_targets is not None:
-            self.remove_isomorphic_results(ini_mlg, break_sym_targets)
+            self._remove_isomorphic_results(ini_mlg, break_sym_targets)
 
         for r in self.results:
-            simplify_labels(r['lgp'])
-
-            if r['val']%self.valfactor==0:
-                r['cd'] = int(r['val']//self.valfactor)
-            else:
-                r['cd'] = r['val']/self.valfactor
+            _simplify_labels(r['lgp'])
 
             if interactive:
                 r["base"] = base
-                r["label_string"] = ";".join(
+                r["choices"] = ";".join(
                     [f"{i+base}>>{j+base}" for i, j in zip(given[0], given[1])]
                 )
 
@@ -236,7 +384,7 @@ class SlapMapper:
                     j_nonzero = np.where(sol["fingerprint"][0] > 0)[0][0]
                 info1j = list(next_info_pair[1].values())[j_nonzero]
 
-                wl_labels1 = lgp[1].ini_wl_labels
+                wl_labels1 = lgp[1]._ini_wl_labels
                 visited = []
                 for idx1 in info1j["idxs"]:
 
@@ -251,11 +399,11 @@ class SlapMapper:
                         new_lgp[1].label2idxs[l].remove(idx1)
                         new_lgp[1].label2idxs[new_l].append(idx1)
 
-                        key = hash_current_labels(new_lgp)
-                        if key not in self.visited:
+                        key = _hash_current_labels(new_lgp)
+                        if key not in self._visited:
                             self._del_irred_labels(new_lgp,[l,new_l])
                             temp_lgps.append(new_lgp)
-                            self.visited.append(key)
+                            self._visited.append(key)
 
         return temp_lgps, temp_results
 
@@ -289,7 +437,7 @@ class SlapMapper:
                                 idx2idxs[idx0].update(list_idxs1[j])
 
         min_item = None
-        min_len = SlapMapper.INF_INT
+        min_len = SlapMapper._INF_INT
         for idx0 in break_sym_targets:
             idxs1 = idx2idxs[idx0]
             if len(idxs1) > 1 and len(idxs1) < min_len:
@@ -315,7 +463,7 @@ class SlapMapper:
             new_lgp = [ini_lgp[0].copy(), ini_lgp[1].copy()]
             new_l = 1000
             for idx0, idx1 in zip(given[0], given[1]):
-                for _ in range(SlapMapper.INF_INT):
+                for _ in range(SlapMapper._INF_INT):
                     new_l += 1
                     if new_l not in new_lgp[0].label2idxs.keys():
                         break
@@ -339,8 +487,8 @@ class SlapMapper:
             is_irred = False
             while True:
 
-                if l in lgp[0].irred_labels:
-                    sols, next_info_pair = lgp[0].irred_labels[l]
+                if l in lgp[0]._irred_labels:
+                    sols, next_info_pair = lgp[0]._irred_labels[l]
                     is_irred = True
                 else:
                     sols, next_info_pair = self._solve_lap_with_label(lgp, l)
@@ -352,7 +500,7 @@ class SlapMapper:
                 if is_irred:
                     break
 
-                ini_label = lgp[0].ini_labels[lgp[0].label2idxs[l][0]]
+                ini_label = lgp[0]._ini_labels[lgp[0].label2idxs[l][0]]
                 if ini_label in avoid_multi_sols:
                     cnt = 0
                     for sol in sols:
@@ -373,18 +521,18 @@ class SlapMapper:
                             new_lgp = self._update_labels(
                                 lgp, l, sol, next_info_pair
                             )
-                            key = hash_current_labels(new_lgp)
-                            if key not in self.visited:
-                                self.stack.append(new_lgp)
-                                self.visited.append(key)
+                            key = _hash_current_labels(new_lgp)
+                            if key not in self._visited:
+                                self._stack.append(new_lgp)
+                                self._visited.append(key)
 
                 break
 
             lap_sols[l] = (sols, next_info_pair)
 
             if is_irred:
-                if l not in lgp[0].irred_labels:
-                    lgp[0].irred_labels[l] = (sols, next_info_pair)
+                if l not in lgp[0]._irred_labels:
+                    lgp[0]._irred_labels[l] = (sols, next_info_pair)
                 continue
             else:
                 return
@@ -644,11 +792,11 @@ class SlapMapper:
                     influenced.update(s0&s1)
 
         for l in influenced:
-            if l in lgp[0].irred_labels:
-                del lgp[0].irred_labels[l]
+            if l in lgp[0]._irred_labels:
+                del lgp[0]._irred_labels[l]
 
 
-def merge_lgp(lgp):
+def _merge_lgp(lgp):
     nshift = len(lgp[0].labels)
     graph0 = {i: {j: w for j, w in d.items()} for i, d in lgp[0].graph.items()}
     shifted_graph1 = {
@@ -659,28 +807,8 @@ def merge_lgp(lgp):
     return LabeledGraph({**graph0, **shifted_graph1}, lgp[0].labels + lgp[1].labels)
 
 
-def connect_mlg(lgp, ini_mlg):
-
-    nshift = len(lgp[0].labels)
-    mlg = ini_mlg.copy()
-
-    for l, idxs0 in lgp[0].label2idxs.items():
-        idxs1 = lgp[1].label2idxs[l]
-        for i0 in idxs0:
-            for i1 in idxs1:
-                mlg.graph[i0][i1 + nshift] = 1
-                mlg.graph[i1 + nshift][i0] = 1
-
-    return mlg
-
-
-def hash_mlg(lgp, ini_mlg):
-    mlg = connect_mlg(lgp, ini_mlg)
-    return hash(tuple(sorted(mlg.get_WL_labels())))
-
-
-def hash_lgp(lgp):
-    mlg = LabeledGraph({}, lgp[0].ini_labels + lgp[1].ini_labels)
+def _hash_lgp(lgp):
+    mlg = LabeledGraph({}, lgp[0]._ini_labels + lgp[1]._ini_labels)
     nshift = len(lgp[0].labels)
     for i,v in lgp[0].graph.items():
         mlg.graph[i] = {j:w for j,w in v.items()}
@@ -695,7 +823,7 @@ def hash_lgp(lgp):
     return hash(tuple(sorted(mlg.get_WL_labels())))
 
 
-def simplify_labels(lgp):
+def _simplify_labels(lgp):
     old2new = {}
     cnt = 1
     for l in lgp[0].labels:
@@ -709,7 +837,7 @@ def simplify_labels(lgp):
         lg.build_label2idxs()
 
 
-def hash_current_labels(lgp):
+def _hash_current_labels(lgp):
     old2new = {}
     cnt = 1
     for l in lgp[0].labels:

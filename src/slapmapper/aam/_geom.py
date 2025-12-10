@@ -7,14 +7,14 @@ except ImportError:
     HAS_ASE = False
 import numpy as np
 from ..core import LabeledGraph
-from .utils import parse_label_string
+from .._idxmapstr import parse_index_mapping_string
 
 
 def geoms2lgp(
     files_react,
     files_prod,
     ase_read_kwargs={},
-    label_string=None,
+    idx_map_str=None,
     base=0,
     bond_scale=1.2,
 ):
@@ -57,8 +57,8 @@ def geoms2lgp(
     if sorted(atomic_nums_pair[0]) != sorted(atomic_nums_pair[1]):
         raise ValueError(f"Unbalanced reactions are not supported in geometric mapping")
 
-    if label_string is not None:
-        pairs = parse_label_string(label_string, base=base)
+    if idx_map_str is not None:
+        pairs = parse_index_mapping_string(idx_map_str, base=base)
 
         for i, pair in enumerate(pairs):
             for idxs, labels in zip(pair, labels_pair):
