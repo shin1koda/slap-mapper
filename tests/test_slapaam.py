@@ -37,3 +37,17 @@ def test_3d():
 
     assert len(mapped_rxns) == 1
     assert mapped_rxns[0] == '0>>4;1>>5;2>>0;3>>3;4>>1;5>>2;6-8>>6-8'
+
+def test_3d_with_constraints():
+
+    mapper = SlapAAM(binary=True)
+    # 3D-structure
+    react = "tests/react.xyz"
+    prod = "tests/prod.xyz"
+    constraints = "6>>6;7>>7;8>>8"
+    mapper.reset()
+    mapper.map_3d(react,prod,constraints=constraints)
+    mapped_rxns = [ r["mapping"] for r in mapper.results ]
+
+    assert len(mapped_rxns) == 1
+    assert mapped_rxns[0] == '0>>4;1>>5;2>>0;3>>3;4>>1;5>>2;6>>6;7>>7;8>>8'

@@ -82,7 +82,6 @@ class LabeledGraph:
         ``props``. If such values are mutable and need independent copies,
         they should be handled externally.
         """
-    def copy(self):
         obj = type(self).__new__(type(self))
         obj.graph = {k: v.copy() for k, v in self.graph.items()}
         obj.labels = self.labels.copy()
@@ -97,7 +96,7 @@ class LabeledGraph:
         obj._irred_labels = self._irred_labels.copy()
 
         return obj
-    
+
     def set_prop(self, name, prop):
         """
         Attach or overwrite a user-defined property associated with the graph.
@@ -189,27 +188,24 @@ class SlapMapper:
     results : list[dict]
         List of matching results. Each dictionary contains:
             - ``"lgp"`` : the pair of refined LabeledGraph objects
-            - ``"val"`` : cumulative LAP cost, which coincides with the
-                          original graph matching cost when all symmetries
-                          are broken.
+            - ``"val"`` : cumulative LAP cost, which coincides with the original graph matching cost when all symmetries are broken.
             - ``"lap_sols"`` : LAP solutions for each label
             - ``"base"`` : (if interactive) base index for user prompts
-            - ``"choices"`` : (if interactive) record of the user-selected
-                              mapping, written in the index mapping string format
+            - ``"choices"`` : (if interactive) record of the user-selected mapping, written in :ref:`the index mapping string<idxmapstr>` format
     minval : int
         Minimum cumulative LAP cost encountered.
     binary : bool
         Whether binary edge processing is used.
 
     """
-    INF_INT = 100000
+    _INF_INT = 100000
 
     def __init__(self, binary=False):
 
         self._stack = []
         self._visited = []
         self.results = []
-        self.minval = SlapMapper.INF_INT
+        self.minval = SlapMapper._INF_INT
 
         self.binary = binary
 
@@ -221,7 +217,7 @@ class SlapMapper:
         self._stack.clear()
         self._visited.clear()
         self.results.clear()
-        self.minval = SlapMapper.INF_INT
+        self.minval = SlapMapper._INF_INT
 
     def _solve(self):
         while self._stack:
@@ -316,7 +312,7 @@ class SlapMapper:
         while temp_lgps:
             self._stack.extend(temp_lgps)
             self.results.clear()
-            self.minval = SlapMapper.INF_INT
+            self.minval = SlapMapper._INF_INT
             self._solve()
             self._remove_non_min_results()
 
@@ -441,7 +437,7 @@ class SlapMapper:
                                 idx2idxs[idx0].update(list_idxs1[j])
 
         min_item = None
-        min_len = SlapMapper.INF_INT
+        min_len = SlapMapper._INF_INT
         for idx0 in break_sym_targets:
             idxs1 = idx2idxs[idx0]
             if len(idxs1) > 1 and len(idxs1) < min_len:
@@ -467,7 +463,7 @@ class SlapMapper:
             new_lgp = [ini_lgp[0].copy(), ini_lgp[1].copy()]
             new_l = 1000
             for idx0, idx1 in zip(given[0], given[1]):
-                for _ in range(SlapMapper.INF_INT):
+                for _ in range(SlapMapper._INF_INT):
                     new_l += 1
                     if new_l not in new_lgp[0].label2idxs.keys():
                         break

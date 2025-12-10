@@ -27,17 +27,13 @@ class SlapAAM(SlapMapper):
     results : list[dict]
         List of matching results. Each dictionary contains:
             - ``"lgp"`` : the pair of refined LabeledGraph objects
-            - ``"val"`` : cumulative LAP cost, which coincides with the
-                          original graph matching cost when all symmetries
-                          are broken.
+            - ``"val"`` : cumulative LAP cost, which coincides with the original graph matching cost when all symmetries are broken.
             - ``"lap_sols"`` : LAP solutions for each label
             - ``"cd"`` : chemical distance computed from cumulative LAP cost
             - ``"base"`` : (if interactive) base index for user prompts
-            - ``"choices"`` : (if interactive) record of the user-selected
-                              mapping, written in the index mapping string format
+            - ``"choices"`` : (if interactive) record of the user-selected mapping, written in :ref:`the index mapping string<idxmapstr>` format
             - ``"smiles"`` : (if mapped from SMILES) mapped reaction SMILES
-            - ``"mapping"`` : (if mapped from 3D structures) mapping in the index
-                              mapping string format
+            - ``"mapping"`` : (if mapped from 3D structures) mapping in :ref:`the index mapping string<idxmapstr>` format
     minval : int
         Minimum cumulative LAP cost encountered.
     binary : bool
@@ -79,7 +75,7 @@ class SlapAAM(SlapMapper):
         rxn_smiles : str
             Reaction SMILES string of the form ``"A>>B"``. Partial mappings
             annotated using atom map numbers (e.g. ``"[C:1]"``) are allowed
-            for adding constraints on the mapping.
+            for imposing constraints on the mapping.
         add_Hs : bool, optional (default=True)
             If True, explicit hydrogens are added before graph construction.
         break_sym : {"heavy", "all"} or list[int], optional (default="heavy")
@@ -155,9 +151,9 @@ class SlapAAM(SlapMapper):
         break_sym : {"heavy", "all"} or list[int], optional (default="heavy")
             Symmetry-breaking strategy (same as in :meth:`map_smiles`).
         constraints : str or None, optional (default=None)
-            The index mapping string for imposing constraints on the mapping.
+            :ref:`The index mapping string<idxmapstr>` for imposing constraints on the mapping.
         base : int or None , optional (default=0)
-            Base index for atom numbering in ``idx_map_str`` and interactive prompts.
+            Base index for atom numbering in ``constraints`` and interactive prompts.
         bond_scale : float, optional (default=1.2)
             Multiplier used when determining adjacency from interatomic
             distances based on covalent radii.
@@ -169,10 +165,10 @@ class SlapAAM(SlapMapper):
         -----
         - Requires ASE.
         - After mapping, each result dictionary contains::
-            
+
               r["mapping"] : str
                     Mapping in the index mapping string format.
- 
+
         """
         if not HAS_ASE:
             raise ImportError("ASE is required for reading structures")
